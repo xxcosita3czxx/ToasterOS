@@ -1,7 +1,7 @@
 xserver-xorg xinit
 mousepad
 eom
-lxde lxtask menu-xdg
+openbox
 zenity xdg-utils
 gvfs-backends gvfs-fuse
 lightdm gnome-themes-extra-data gnome-icon-theme

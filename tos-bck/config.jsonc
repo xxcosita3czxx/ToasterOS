@@ -1,0 +1,46 @@
+//   _____ _____ _____ _____ _____ _____ _____ _____ _____
+//  |   __|  _  |   __|_   _|   __|   __|_   _|     |  |  |
+//  |   __|     |__   | | | |   __|   __| | | |   --|     |
+//  |__|  |__|__|_____| |_| |__|  |_____| |_| |_____|__|__|  FULL INFO
+//
+//  by Bina
+
+
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "~/.local/share/fastfetch/ascii/FastFetchImg.txt",
+        "padding": {
+            "top": 2,
+            "right": 6
+        }
+    },
+    "modules": [
+        "title",
+        "separator",
+        "os",
+        "host",
+        "uptime",
+        "processes",
+        "packages",
+        "shell",
+        "display",
+        "cpu",
+        "cpuusage",
+        "memory",
+        "disk",
+        "battery",
+        "poweradapter",
+        "player",
+        "media",
+        "datetime",
+        "vulkan",
+        "opengl",
+        "opencl",
+        "diskio",
+        "physicaldisk",
+        "version",
+        "break",
+        "colors"
+    ]
+}

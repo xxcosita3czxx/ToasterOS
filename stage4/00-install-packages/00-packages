@@ -9,7 +9,6 @@ python3-numpy
 alacarte rc-gui sense-hat
 tree
 libgl1-mesa-dri libgles1 libgles2-mesa xcompmgr
-geany
 piclone
 python3-twython
 python3-flask
@@ -18,7 +17,6 @@ piwiz
 rp-prefapps
 ffmpeg
 vlc
-rpi-connect
 rpi-imager
 labwc
 squeekboard
