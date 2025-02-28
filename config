@@ -4,7 +4,7 @@ PI_GEN_RELEASE="ToasterOS"
 PI_GEN_REPO="https://github.com/xxcosita3czxx/ToasterOS"
 TARGET_HOSTNAME="ToasterOS"
 
-FIRST_USER_NAME=toaster
+FIRST_USER_NAME="toaster"
 FIRST_USER_PASS="toaster"
 DISABLE_FIRST_BOOT_USER_RENAME=1
 
