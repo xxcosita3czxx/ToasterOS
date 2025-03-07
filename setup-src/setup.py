@@ -1,7 +1,6 @@
 import os
 import shutil
 import sys
-import platform
 
 def extract_files_from_executable(source_dir, target_dir):
     if not getattr(sys, 'frozen', False):
