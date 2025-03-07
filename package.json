@@ -14,10 +14,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
-    "preview": "vite preview",
-    "pretest": "vite build --mode=test",
-    "test": "vitest run"
+    "build": "tsc && vite build && electron-builder"
   },
   "dependencies": {
     "electron-updater": "^6.3.9"

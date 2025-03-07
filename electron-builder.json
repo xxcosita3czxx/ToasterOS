@@ -9,12 +9,12 @@
     "dist-electron",
     "dist"
   ],
-  "mac": {
-    "artifactName": "${productName}_${version}.${ext}",
+  "linux": {
     "target": [
-      "dmg",
-      "zip"
-    ]
+      "deb",
+      "AppImage"
+    ],
+    "artifactName": "${productName}_${version}.${ext}"
   },
   "win": {
     "target": [
