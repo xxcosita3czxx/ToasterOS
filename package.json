@@ -1,9 +1,9 @@
 {
-  "name": "electron-vite-react",
+  "name": "toasteros",
   "version": "2.2.0",
   "main": "dist-electron/main/index.js",
-  "description": "Electron Vite React boilerplate.",
-  "author": "草鞋没号 <308487730@qq.com>",
+  "description": "ToasterOS main system.",
+  "author": "xxcosita3czxx <kokosove18@gmail.com>",
   "license": "MIT",
   "private": true,
   "debug": {
