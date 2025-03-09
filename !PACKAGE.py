@@ -2,7 +2,7 @@ import os
 import click
 import shutil
 
-control_content = """Package: toasteros
+control_content = """Package: ToasterOS
 Version: 1.0
 Section: base
 Priority: optional
