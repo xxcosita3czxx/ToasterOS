@@ -18,6 +18,11 @@ set -e
 # Set the custom Plymouth theme
 plymouth-set-default-theme -R toaster
 
+# Check if /boot/firmware/config.txt exists
+if [ -f /boot/firmware/config.txt ]; then
+    # Disable the rainbow splash by adding the line
+    echo "disable_splash=1" >> /boot/firmware/config.txt
+
 # Update initramfs to apply the theme
 update-initramfs -u
 
