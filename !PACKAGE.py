@@ -21,7 +21,9 @@ plymouth-set-default-theme -R toaster
 # Update initramfs to apply the theme
 update-initramfs -u
 
-dpkg -i /tmp/toasteros*.deb
+# Force the installation to bypass dpkg file lock
+dpkg --force-all -i /tmp/toasteros*.deb
+
 # Add post-install commands here
 
 # Check if /boot/firmware/config.txt exists
