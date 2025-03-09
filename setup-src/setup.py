@@ -21,7 +21,5 @@ def extract_files_from_executable(source_dir, target_dir):
             shutil.copytree(s, d, dirs_exist_ok=True)
         else:
             shutil.copy2(s, d)
-
-
     # Example usage:
     # extract_files_from_executable('source_folder', '~/ToasterOS/target_folder')
