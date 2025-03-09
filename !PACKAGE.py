@@ -55,5 +55,6 @@ def main():
     print("building deb")
     os.system("dpkg-deb --build ToasterOS-work")
     shutil.move('ToasterOS-work.deb', 'ToasterOS.deb')
+
 if __name__ == '__main__':
     main()
