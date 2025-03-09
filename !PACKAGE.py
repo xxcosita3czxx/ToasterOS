@@ -7,7 +7,7 @@ Version: 1.0
 Section: base
 Priority: optional
 Architecture: arm64
-Depends: libgtk-3-0, libgdk-pixbuf2.0-0
+Depends: libgtk-3-0, libgdk-pixbuf2.0-0, plymouth, plymouth-themes
 Maintainer: xxcosita3czxx <kokosove18@gmail.com>
 Description: ToasterOS is a sample package
 """
