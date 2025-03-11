@@ -2,6 +2,7 @@
   "name": "toasteros",
   "version": "2.2.0",
   "main": "dist-electron/main/index.js",
+  "homepage": "https://github.com/xxcosita3czxx/ToasterOS",
   "description": "ToasterOS main system.",
   "author": "xxcosita3czxx <kokosove18@gmail.com>",
   "license": "MIT",
