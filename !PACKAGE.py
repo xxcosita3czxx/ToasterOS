@@ -48,6 +48,8 @@ def main():
     os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
     print("moving setup files")
     os.system("cp -r Setup/* ToasterOS-work/tmp/toasteros/ToasterOS/setup")
+    os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
+    os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
     print("building app")
     os.chdir("App")
     os.system("npm run build")
