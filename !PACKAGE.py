@@ -43,6 +43,7 @@ def main():
     os.makedirs('ToasterOS-work/tmp/toasteros', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
     print("building")
+    os.chdir("App")
     os.system("npm run build")
     for root, dirs, files in os.walk('release'):
         for file in files:
@@ -51,6 +52,7 @@ def main():
                 dst = os.path.join('ToasterOS-work', 'tmp',"toasteros", file)
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 os.system(f"cp {src} {dst}")
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     print("writing control files")
     control_file_path = os.path.join('ToasterOS-work', 'DEBIAN', 'control')
     with open(control_file_path, 'w') as control_file:
