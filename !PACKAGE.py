@@ -25,6 +25,8 @@ update-initramfs -u
 dpkg --force-all -i /tmp/toasteros*.deb
 
 # Add post-install commands here
+USER_HOME=$(eval echo ~$USER)
+mv /tmp/toaster/ToasterOS $USER_HOME/.config/ToasterOS
 
 # Check if /boot/firmware/config.txt exists
 if [ -f /boot/firmware/config.txt ]; then
@@ -40,9 +42,13 @@ def main():
     shutil.rmtree('ToasterOS-work', ignore_errors=True)
     print("generating dirs")
     os.makedirs('ToasterOS-work/DEBIAN/', exist_ok=True)
-    os.makedirs('ToasterOS-work/tmp/toasteros', exist_ok=True)
+    os.makedirs('ToasterOS-work/tmp/toasteros/ToasterOS/setup', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
-    print("building")
+    print("moving plymouth theme")
+    os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
+    print("moving setup files")
+    os.system("cp -r Setup/* ToasterOS-work/tmp/toasteros/ToasterOS/setup")
+    print("building app")
     os.chdir("App")
     os.system("npm run build")
     for root, dirs, files in os.walk('release'):
@@ -61,8 +67,6 @@ def main():
     with open(postinst_file_path, 'w') as postinst_file:
         postinst_file.write(postinst_content)
         os.system("chmod +x "+postinst_file_path)
-    print("moving plymouth theme")
-    os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
     print("building deb")
     os.system("dpkg-deb --build ToasterOS-work")
     shutil.move('ToasterOS-work.deb', 'ToasterOS.deb')
