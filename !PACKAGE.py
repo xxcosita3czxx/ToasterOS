@@ -51,7 +51,7 @@ def main():
     print("building app")
     os.chdir("App")
     os.system("npm run build")
-    for root, dirs, files in os.walk('release'):
+    for root, dirs, files in os.walk('App/release'):
         for file in files:
             if file.endswith('.deb'):
                 src = os.path.join(root, file)
