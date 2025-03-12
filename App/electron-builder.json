@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "ToasterOS",
   "asar": true,
   "directories": {
     "output": "release/${version}"
@@ -11,8 +11,7 @@
   ],
   "linux": {
     "target": [
-      "deb",
-      "AppImage"
+      "deb"
     ],
     "artifactName": "${productName}_${version}.${ext}"
   },
@@ -21,7 +20,7 @@
       {
         "target": "nsis",
         "arch": [
-          "x64"
+          "arm64"
         ]
       }
     ],
