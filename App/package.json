@@ -18,7 +18,8 @@
     "build": "tsc && vite build && electron-builder"
   },
   "dependencies": {
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.3.9",
+    "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.2",
