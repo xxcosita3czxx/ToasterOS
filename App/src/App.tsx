@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import './App.css'
+import Screensaver from './Screensaver';
+import Menu from './Menu';
 
 function App() {
+  const isXScreenSaverWindow = typeof process !== 'undefined' && process.env.XSCREENSAVER_WINDOW !== undefined;
+
   return (
-    <>
     <div className='App'>
-      <h1>Menu</h1>
+      {isXScreenSaverWindow ? (
+        <Screensaver />
+      ) : (
+        <Menu />
+      )}
     </div>
-    
-    </>
   )
 }
 
