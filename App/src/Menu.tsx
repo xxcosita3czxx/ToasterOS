@@ -1,22 +1,31 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import "./Menu.css";
 
+const Menu: React.FC = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
 
-const Screensaver: React.FC = () => {
     return (
         <>
-        <div>
-            <h1>Settings Menu</h1>
-            <ul>
-                <li><Link to="/settings/face">Face</Link></li>
-                <li><Link to="/settings/sound">Sound</Link></li>
-                <li><Link to="/settings/system">System</Link></li>
-                <li><Link to="/settings/about">About</Link></li>
-            </ul>
-        </div>
+            <Navbar toggleSidebar={toggleSidebar} />
+            <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+                {/* Sidebar content can be added here if needed */}
+            </div>
+            <div className="content">
+                <Routes>
+                    <Route path="/settings/face" element={<div>Face Settings</div>} />
+                    <Route path="/settings/system" element={<div>System Settings</div>} />
+                    <Route path="/settings/sound" element={<div>Sound Settings</div>} />
+                    <Route path="/settings/about" element={<div>About</div>} />
+                </Routes>
+            </div>
         </>
-);
+    );
 };
 
-export default Screensaver;
+export default Menu;
