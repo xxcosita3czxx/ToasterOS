@@ -3,6 +3,8 @@ import './App.css'
 import Screensaver from './Screensaver';
 import Menu from './Menu';
 
+// TODO: Add maintenance mode
+
 function App() {
   const isXScreenSaverWindow = typeof process !== 'undefined' && process.env.XSCREENSAVER_WINDOW !== undefined;
 
