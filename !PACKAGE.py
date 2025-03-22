@@ -38,11 +38,25 @@ fi
 
 """
 
+config_content ="""IMG_NAME=ToasterOS.img
+PI_GEN_RELEASE=ToasterOS
+TARGET_HOSTNAME=ToasterOS
+TIMEZONE_DEFAULT=Europe/Prague
+DISABLE_FIRST_BOOT_USER_RENAME=1
+FIRST_USER_NAME=toaster
+FIRST_USER_PASS=toaster
+STAGE_LIST="stage0 stage1 stage2 stage3 stage4"
+CLEAN=1
+LOG_FILE="${WORK_DIR}/../../build.log"
+"""
+
 @click.command()
 def main():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     shutil.rmtree('ToasterOS-work', ignore_errors=True)
+    shutil.rmtree('pi-gen/stage6', ignore_errors=True)
     print("generating dirs")
+    os.makedirs("pi-gen/stage6/files", exist_ok=True)
     os.makedirs('ToasterOS-work/DEBIAN/', exist_ok=True)
     os.makedirs('ToasterOS-work/tmp/toasteros/ToasterOS/setup', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
@@ -50,10 +64,12 @@ def main():
     print("moving plymouth theme")
     os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
     print("moving setup files")
+    os.system("cp -r assets/stage6/* pi-gen/stage6")
     os.system("cp -r Setup/* ToasterOS-work/tmp/toasteros/ToasterOS/setup")
     os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
     os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
     print("writing control files")
+    os.system("cp -r pi-gen ToasterOS-work")
     control_file_path = os.path.join('ToasterOS-work', 'DEBIAN', 'control')
     with open(control_file_path, 'w') as control_file:
         control_file.write(control_content)
@@ -61,6 +77,9 @@ def main():
     with open(postinst_file_path, 'w') as postinst_file:
         postinst_file.write(postinst_content)
         os.system("chmod +x "+postinst_file_path)
+    config_file_path = os.path.join('ToasterOS-work', "pi-gen", "config")
+    with open(config_file_path, "w") as config_file:
+        config_file.write(config_content)
     print("building app")
     os.chdir("App")
     os.system("npm run build")
@@ -76,6 +95,24 @@ def main():
     print("building deb")
     os.system("dpkg-deb --build ToasterOS-work")
     shutil.move('ToasterOS-work.deb', 'ToasterOS.deb')
+    shutil.move("ToasterOS.deb", "pi-gen/stage6/files/ToasterOS.deb")
+    # Create SKIP_IMAGE files in stages before stage6
+    for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5']:
+        skip_image_path = os.path.join('pi-gen', stage, 'SKIP_IMAGES')
+        with open(skip_image_path, 'w') as skip_image_file:
+            skip_image_file.write('')
+    with open('pi-gen/stage5/SKIP', 'w') as skip_image_file:
+        skip_image_file.write('')
+    if os.path.exists('pi-gen/work'):
+        for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5']:
+            skip_image_path = os.path.join('pi-gen', stage, 'SKIP')
+            with open(skip_image_path, 'w') as skip_image_file:
+                skip_image_file.write('')
+    os.chdir("pi-gen")
+    os.system("sudo ./build.sh")
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    shutil.move("pi-gen/work/*/toasteros_*.zip", "ToasterOS.zip")
+    print("done")
 
 if __name__ == '__main__':
     main()
