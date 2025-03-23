@@ -45,7 +45,7 @@ TIMEZONE_DEFAULT=Europe/Prague
 DISABLE_FIRST_BOOT_USER_RENAME=1
 FIRST_USER_NAME=toaster
 FIRST_USER_PASS=toaster
-STAGE_LIST="stage0 stage1 stage2 stage3 stage4"
+STAGE_LIST="stage0 stage1 stage2 stage3 stage4 stage6"
 CLEAN=1
 LOG_FILE="${WORK_DIR}/../../build.log"
 """
@@ -55,6 +55,10 @@ def main():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     shutil.rmtree('ToasterOS-work', ignore_errors=True)
     shutil.rmtree('pi-gen/stage6', ignore_errors=True)
+    try:
+        shutil.move("pi-gen/stg5","pi-gen/stage5")
+    except Exception:
+        pass
     print("generating dirs")
     os.makedirs("pi-gen/stage6/files", exist_ok=True)
     os.makedirs('ToasterOS-work/DEBIAN/', exist_ok=True)
@@ -69,7 +73,6 @@ def main():
     os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
     os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
     print("writing control files")
-    os.system("cp -r pi-gen ToasterOS-work")
     control_file_path = os.path.join('ToasterOS-work', 'DEBIAN', 'control')
     with open(control_file_path, 'w') as control_file:
         control_file.write(control_content)
@@ -77,7 +80,7 @@ def main():
     with open(postinst_file_path, 'w') as postinst_file:
         postinst_file.write(postinst_content)
         os.system("chmod +x "+postinst_file_path)
-    config_file_path = os.path.join('ToasterOS-work', "pi-gen", "config")
+    config_file_path = os.path.join("pi-gen", "config")
     with open(config_file_path, "w") as config_file:
         config_file.write(config_content)
     print("building app")
@@ -97,21 +100,20 @@ def main():
     shutil.move('ToasterOS-work.deb', 'ToasterOS.deb')
     shutil.move("ToasterOS.deb", "pi-gen/stage6/files/ToasterOS.deb")
     # Create SKIP_IMAGE files in stages before stage6
-    for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5']:
+    for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4']:
         skip_image_path = os.path.join('pi-gen', stage, 'SKIP_IMAGES')
         with open(skip_image_path, 'w') as skip_image_file:
             skip_image_file.write('')
-    with open('pi-gen/stage5/SKIP', 'w') as skip_image_file:
-        skip_image_file.write('')
+    shutil.move("pi-gen/stage5","pi-gen/stg5")
     if os.path.exists('pi-gen/work'):
-        for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4', 'stage5']:
+        for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4']:
             skip_image_path = os.path.join('pi-gen', stage, 'SKIP')
             with open(skip_image_path, 'w') as skip_image_file:
                 skip_image_file.write('')
     os.chdir("pi-gen")
     os.system("sudo ./build.sh")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    shutil.move("pi-gen/work/*/toasteros_*.zip", "ToasterOS.zip")
+    shutil.move("pi-gen/deploy/*.zip", "ToasterOS.zip")
     print("done")
 
 if __name__ == '__main__':
