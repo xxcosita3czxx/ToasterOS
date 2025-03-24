@@ -105,6 +105,7 @@ def main():
         with open(skip_image_path, 'w') as skip_image_file:
             skip_image_file.write('')
     shutil.move("pi-gen/stage5","pi-gen/stg5")
+    os.system("chmod +x -R pi-gen/stage6/*")
     if os.path.exists('pi-gen/work'):
         for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4']:
             skip_image_path = os.path.join('pi-gen', stage, 'SKIP')
