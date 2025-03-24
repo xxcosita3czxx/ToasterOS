@@ -1,7 +1,7 @@
 #!/bin/bash
 
-install -m 755 files/toasterOS.deb "${ROOTFS_DIR}/tmp/toasterOS.deb"
+install -m 755 files/ToasterOS.deb "${ROOTFS_DIR}/tmp/toasterOS.deb"
 on_chroot << EOF
-dpkg -i /tmp/toasterOS.deb
+dpkg -i /tmp/ToasterOS.deb
 EOF
-rm "${ROOTFS_DIR}/tmp/toasterOS.deb"
+rm "${ROOTFS_DIR}/tmp/ToasterOS.deb"

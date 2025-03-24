@@ -60,7 +60,7 @@ def main():
     except Exception:
         pass
     print("generating dirs")
-    os.makedirs("pi-gen/stage6/files", exist_ok=True)
+    os.makedirs("pi-gen/stage6/00-install-toasterOS/files", exist_ok=True)
     os.makedirs('ToasterOS-work/DEBIAN/', exist_ok=True)
     os.makedirs('ToasterOS-work/tmp/toasteros/ToasterOS/setup', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
@@ -98,7 +98,7 @@ def main():
     print("building deb")
     os.system("dpkg-deb --build ToasterOS-work")
     shutil.move('ToasterOS-work.deb', 'ToasterOS.deb')
-    shutil.move("ToasterOS.deb", "pi-gen/stage6/files/ToasterOS.deb")
+    shutil.move("ToasterOS.deb", "pi-gen/stage6/00-install-toasterOS/files/ToasterOS.deb")
     # Create SKIP_IMAGE files in stages before stage6
     for stage in ['stage0', 'stage1', 'stage2', 'stage3', 'stage4']:
         skip_image_path = os.path.join('pi-gen', stage, 'SKIP_IMAGES')
