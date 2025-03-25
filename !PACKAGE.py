@@ -21,13 +21,12 @@ plymouth-set-default-theme -R toaster
 update-initramfs -u
 
 # Add post-install commands here
-USER_HOME=$(eval echo ~$USER)
-cp -r /usr/share/ToasterOS/ $USER_HOME/ToasterOS
+cp -r /usr/share/ToasterOS/ /home/toaster/ToasterOS
 
 # Check if /boot/firmware/config.txt exists
-if [ -f /boot/firmware/config.txt ]; then
-    # Disable the rainbow splash by adding the line
-    echo "disable_splash=1" >> /boot/firmware/config.txt
+#if [ -f /boot/firmware/config.txt ]; then
+#    # Disable the rainbow splash by adding the line
+#    echo "disable_splash=1" >> /boot/firmware/config.txt
 fi
 
 """
