@@ -7,7 +7,6 @@ Version: 1.0
 Section: base
 Priority: optional
 Architecture: arm64
-Depends: libgtk-3-0, libgdk-pixbuf2.0-0, plymouth, plymouth-themes, xscreensaver, xscreensaver-data-extra, xscreensaver-gl-extra
 Maintainer: xxcosita3czxx <kokosove18@gmail.com>
 Description: ToasterOS is a sample package
 """
@@ -21,9 +20,10 @@ plymouth-set-default-theme -R toaster
 # Update initramfs to apply the theme
 update-initramfs -u
 
+rm -rf /var/lib/dpkg/lock
+rm -rf /var/lib/dpkg/lock-frontend
 # Force the installation to bypass dpkg file lock
-dpkg --force-all -i /tmp/toasteros*.deb
-
+dpkg -i /tmp/toasteros*.deb
 echo " b"
 
 # Add post-install commands here
