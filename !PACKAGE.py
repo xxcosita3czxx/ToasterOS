@@ -22,7 +22,7 @@ update-initramfs -u
 
 # Add post-install commands here
 USER_HOME=$(eval echo ~$USER)
-mv /usr/share/ToasterOS/skel/ToasterOS $USER_HOME/.config/ToasterOS
+cp -r /usr/share/ToasterOS/ $USER_HOME/ToasterOS
 
 # Check if /boot/firmware/config.txt exists
 if [ -f /boot/firmware/config.txt ]; then
@@ -108,7 +108,10 @@ def main():
     os.chdir("pi-gen")
     os.system("sudo ./build.sh")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    shutil.move("pi-gen/deploy/*.zip", "ToasterOS.zip")
+    for _root, _dirs, files in os.walk('pi-gen/deploy'):
+        for file in files:
+            if file.endswith('.zip'):
+                shutil.move("pi-gen/deploy/{file}", "./ToasterOS.img.zip")
     print("done")
 
 if __name__ == '__main__':
