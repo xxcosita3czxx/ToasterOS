@@ -20,15 +20,9 @@ plymouth-set-default-theme -R toaster
 # Update initramfs to apply the theme
 update-initramfs -u
 
-rm -rf /var/lib/dpkg/lock
-rm -rf /var/lib/dpkg/lock-frontend
-# Force the installation to bypass dpkg file lock
-dpkg -i /tmp/toasteros*.deb
-echo " b"
-
 # Add post-install commands here
 USER_HOME=$(eval echo ~$USER)
-mv /tmp/toaster/ToasterOS $USER_HOME/.config/ToasterOS
+mv /usr/share/ToasterOS/skel/ToasterOS $USER_HOME/.config/ToasterOS
 
 # Check if /boot/firmware/config.txt exists
 if [ -f /boot/firmware/config.txt ]; then
@@ -62,16 +56,16 @@ def main():
     print("generating dirs")
     os.makedirs("pi-gen/stage6/00-install-toasterOS/files", exist_ok=True)
     os.makedirs('ToasterOS-work/DEBIAN/', exist_ok=True)
-    os.makedirs('ToasterOS-work/tmp/toasteros/ToasterOS/setup', exist_ok=True)
+    os.makedirs('ToasterOS-work/usr/share/ToasterOS/setup', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/icons/toaster/", exist_ok=True)
     print("moving plymouth theme")
     os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
     print("moving setup files")
     os.system("cp -r assets/stage6/* pi-gen/stage6")
-    os.system("cp -r Setup/* ToasterOS-work/tmp/toasteros/ToasterOS/setup")
-    os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
-    os.system("cp ToasterOS-work/tmp/toasteros/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
+    os.system("cp -r Setup/* ToasterOS-work/usr/share/ToasterOS/setup")
+    os.system("cp ToasterOS-work/usr/share/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
+    os.system("cp ToasterOS-work/usr/share/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
     print("writing control files")
     control_file_path = os.path.join('ToasterOS-work', 'DEBIAN', 'control')
     with open(control_file_path, 'w') as control_file:
@@ -91,7 +85,7 @@ def main():
         for file in files:
             if file.endswith('.deb'):
                 src = os.path.join(root, file)
-                dst = os.path.join('ToasterOS-work', 'tmp',"toasteros", file)
+                dst = os.path.join('ToasterOS-work', 'usr',"share","ToasterOS","app", file)
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 os.system(f"cp {src} {dst}")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
