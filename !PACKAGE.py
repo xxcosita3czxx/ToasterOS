@@ -27,7 +27,15 @@ cp -r /usr/share/ToasterOS/ /home/toaster/ToasterOS
 #if [ -f /boot/firmware/config.txt ]; then
 #    # Disable the rainbow splash by adding the line
 #    echo "disable_splash=1" >> /boot/firmware/config.txt
+#fi
+
+# Add ToasterOS to the xscreensaver configuration
+if ! grep -q "ToasterOS" /home/toaster/.xscreensaver; then
+    echo '  "ToasterOS" /usr/bin/toasteros --screensaver \\' >> ~/.xscreensaver
 fi
+
+# Restart xscreensaver
+xscreensaver-command -restart || true
 
 """
 
@@ -58,11 +66,14 @@ def main():
     os.makedirs('ToasterOS-work/usr/share/ToasterOS/setup', exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/plymouth/themes/toaster/", exist_ok=True)
     os.makedirs("ToasterOS-work/usr/share/icons/toaster/", exist_ok=True)
+    os.makedirs("ToasterOS-work/usr/share/applications", exist_ok=True)
     print("moving plymouth theme")
     os.system("cp -r assets/plymouth/* ToasterOS-work/usr/share/plymouth/themes/toaster")
     print("moving setup files")
     os.system("cp -r assets/stage6/* pi-gen/stage6")
     os.system("cp -r Setup/* ToasterOS-work/usr/share/ToasterOS/setup")
+    os.system("cp assets/toaster.xscreensaver ToasterOS-work/usr/share/xscreensaver")
+    os.system("cp assets/Settings.desktop ToasterOS-work/usr/share/applications")
     os.system("cp ToasterOS-work/usr/share/ToasterOS/setup/logo.jpg ToasterOS-work/usr/share/icons/toaster/logo.jpg")
     os.system("cp ToasterOS-work/usr/share/ToasterOS/setup/logo-transparent.png ToasterOS-work/usr/share/icons/toaster/logo-transparent.png")
     print("writing control files")

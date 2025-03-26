@@ -1,0 +1,6 @@
+ToasterOS {
+  command: /bin/toasteros --screensaver
+  name: ToasterOS Screensaver
+  desc: A screensaver powered by ToasterOS
+  exec: false
+}

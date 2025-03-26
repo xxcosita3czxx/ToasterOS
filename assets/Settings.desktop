@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ToasterOS
+Comment=ToasterOS main system
+Exec=/bin/toasteros
+Icon=/usr/share/icons/toaster/icon.png
+Terminal=false
+Categories=ToasterOS;
