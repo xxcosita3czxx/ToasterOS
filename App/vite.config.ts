@@ -13,7 +13,12 @@ export default defineConfig(({ command }) => {
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
 
+  const isScreensaver = process.argv.includes('--screensaver');
+
   return {
+    define: {
+      __IS_SCREENSAVER__: JSON.stringify(isScreensaver),
+    },
     resolve: {
       alias: {
         '@': path.join(__dirname, 'src')

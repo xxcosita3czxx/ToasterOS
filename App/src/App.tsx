@@ -6,8 +6,8 @@ import Menu from './Menu';
 // TODO: Add maintenance mode
 
 function App() {
-  const isXScreenSaverWindow = typeof process !== 'undefined' && process.env.XSCREENSAVER_WINDOW !== undefined;
-
+  const isXScreenSaverWindow = typeof __IS_SCREENSAVER__ !== 'undefined' && __IS_SCREENSAVER__;
+  console.log(isXScreenSaverWindow);
   return (
     <div className='App'>
       {isXScreenSaverWindow ? (

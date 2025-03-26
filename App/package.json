@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev_scrsvr": "XSCREENSAVER=1 vite",
+    "dev_scrsvr": "vite -- --screensaver",
     "build": "tsc && vite build && electron-builder"
   },
   "dependencies": {
