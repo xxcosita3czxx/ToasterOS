@@ -1,16 +1,23 @@
-ARG BASE_IMAGE=debian:bullseye
-FROM ${BASE_IMAGE}
+FROM alpine:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
+RUN apk add alpine-sdk alpine-conf syslinux xorriso squashfs-tools grub grub-efi doas pigz
+RUN apk add mtools dosfstools grub-efi
 
-RUN apt-get -y update && \
-    apt-get -y install --no-install-recommends \
-        git vim parted \
-        quilt coreutils qemu-user-static debootstrap zerofree zip dosfstools \
-        libarchive-tools libcap2-bin rsync grep udev xz-utils curl xxd file kmod bc \
-        binfmt-support ca-certificates fdisk gpg pigz arch-test \
-    && rm -rf /var/lib/apt/lists/*
+RUN adduser build -G abuild --disabled-password
+RUN echo "permit persist :abuild" >> /etc/doas.d/doas.conf
+RUN echo "permit nopass :abuild" >> /etc/doas.d/doas.conf
+USER build
+WORKDIR /home/build
+RUN abuild-keygen -i -a -n
+RUN git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git
+COPY mkimg.toaster.sh /home/build/aports/scripts/mkimg.toaster.sh
+COPY genapkovl-toaster.sh /home/build/aports/scripts/genapkovl-toaster.sh
+RUN doas -n chmod +x ~/aports/scripts/mkimg.toaster.sh
+RUN doas -n chmod +x ~/aports/scripts/genapkovl-toaster.sh
+RUN doas -n apk update
+RUN mkdir -pv ~/tmp
+RUN mkdir -p ~/iso
 
-COPY . /pi-gen/
+COPY entrypoint.sh /entrypoint.sh
 
-VOLUME [ "/pi-gen/work", "/pi-gen/deploy"]
+ENTRYPOINT [ "/entrypoint.sh" ]

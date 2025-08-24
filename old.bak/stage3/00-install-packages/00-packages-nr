@@ -1,0 +1,8 @@
+xserver-xorg xinit
+mousepad
+eom
+openbox
+zenity xdg-utils
+gvfs-backends gvfs-fuse
+lightdm gnome-themes-extra-data gnome-icon-theme
+gnome-keyring

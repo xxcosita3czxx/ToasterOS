@@ -1,0 +1,56 @@
+// Get screen size
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+function loadFrames(folder, count) {
+    frames = [];
+    for (i = 1; i <= count; i++) {
+        frame_path = folder + "/frame_" + String.Format("%04d", i) + ".png";
+        frame = Image(frame_path);
+        frame.SetX((screen_width - frame.GetWidth()) / 2);
+        frame.SetY((screen_height - frame.GetHeight()) / 2);
+        frames.PushBack(frame);
+    }
+    return frames;
+}
+
+// Load animations
+start_frames = loadFrames("part0", 50);
+during_frames = loadFrames("part1", 100);
+stop_frames = loadFrames("part2", 50);
+
+// Play start animation
+for (i = 0; i < start_frames.Size(); i++) {
+    if (i > 0) Window.Remove(start_frames[i - 1]);
+    Window.Add(start_frames[i]);
+    Plymouth.Sleep(0.05);
+}
+
+// Loop during animation
+progress = 0;
+while (progress < 100) {
+    Plymouth.SetProgress(progress / 100.0);
+    frame_index = progress % during_frames.Size();
+    
+    if (frame_index > 0) Window.Remove(during_frames[frame_index - 1]);
+    Window.Add(during_frames[frame_index]);
+    
+    progress += 1;
+    Plymouth.Sleep(0.1);
+}
+
+// Play stop animation
+for (i = 0; i < stop_frames.Size(); i++) {
+    if (i > 0) Window.Remove(stop_frames[i - 1]);
+    Window.Add(stop_frames[i]);
+    Plymouth.Sleep(0.05);
+}
+
+// Fade out
+for (i = 0; i < 255; i += 5) {
+    stop_frames[stop_frames.Size() - 1].SetOpacity(1 - i / 255.0);
+    Plymouth.Sleep(0.02);
+}
+
+// Cleanup
+Window.Remove(stop_frames[stop_frames.Size() - 1]);

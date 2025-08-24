@@ -1,0 +1,4 @@
+[Plymouth Theme]
+Name=My Progress Theme
+Description=Boot animation with actual progress
+ModuleName=script

@@ -1,0 +1,12 @@
+[Unit]
+Description=First Boot Setup for ToasterOS
+DefaultDependencies=no
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/toaster/ToasterOS/setup/setup.py
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
