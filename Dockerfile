@@ -12,8 +12,6 @@ USER build
 WORKDIR /home/build
 RUN abuild-keygen -i -a -n
 RUN git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git
-COPY mkimg.toaster.sh /home/build/aports/scripts/mkimg.toaster.sh
-COPY genapkovl-toaster.sh /home/build/aports/scripts/genapkovl-toaster.sh
 RUN mkdir -p ~/build
 COPY gui/requirements.txt /home/build/build/
 COPY gui/m6x11pluscs.ttf /home/build/build/
@@ -23,6 +21,8 @@ RUN python -m pip install pyinstaller --break
 RUN python -m pip install -r /home/build/build/requirements.txt --break
 RUN python -m PyInstaller --onefile /home/build/build/installer.py --add-data "/home/build/build/m6x11pluscs.ttf:."
 RUN python -m PyInstaller --onefile /home/build/build/postinstall.py --add-data "/home/build/build/m6x11pluscs.ttf:."
+COPY mkimg.toaster.sh /home/build/aports/scripts/mkimg.toaster.sh
+COPY genapkovl-toaster.sh /home/build/aports/scripts/genapkovl-toaster.sh
 RUN doas -n chmod +x ~/aports/scripts/mkimg.toaster.sh
 RUN doas -n chmod +x ~/aports/scripts/genapkovl-toaster.sh
 RUN doas -n apk update

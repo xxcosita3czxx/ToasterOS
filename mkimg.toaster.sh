@@ -22,6 +22,7 @@ rpi_gen_config() {
 		initramfs boot/initramfs-rpi
 		arm_64bit=$arm_64bit
         disable_overscan=1
+		dtoverlay=vc4-kms-v3d
 	EOF
 }
 
@@ -55,8 +56,17 @@ profile_toaster() {
 	sdl2 sdl2-dev \
 	sdl2_ttf sdl2_ttf-dev \
 	libdrm \
+	libinput-dev \
+	xf86-input-libinput \
+	eudev \
+	mesa-gbm \
 	mesa-dri-gallium \
-	mesa-egl"
+	mesa-egl \
+	kbd \
+	sed \
+	agetty \
+	networkmanager \
+	networkmanager-cli"
     apkovl="aports/scripts/genapkovl-toaster.sh"
 }
 

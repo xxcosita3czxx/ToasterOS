@@ -52,6 +52,16 @@ sdl2-dev
 sdl2_ttf
 libdrm
 mesa-dri-gallium
+mesa-gbm
+mesa-egl
+libinput-dev
+xf86-input-libinput
+eudev
+networkmanager
+networkmanager-cli
+agetty
+sed
+kbd
 mesa-egl
 EOF
 
@@ -91,13 +101,31 @@ NTPOPTS="-c busybox"
 DISKOPTS="-m sys /dev/sda"
 EOF
 
+mkdir -p "$tmp"/etc/NetworkManager/
+makefile root:root 0644 "$tmp"/etc/NetworkManager/NetworkManager.conf <<EOF
+[main] 
+dhcp=internal
+plugins=ifupdown,keyfile
+
+[ifupdown]
+managed=true 
+
+[device]
+wifi.scan-rand-mac-address=yes
+wifi.backend=wpa_supplicant
+EOF
+
 mkdir -p "$tmp"/etc/init.d
-makefile root:root 0744 "$tmp"/etc/init.d/install <<EOF
+makefile root:root 0744 "$tmp"/etc/init.d/install <<'EOF'
 #!/sbin/openrc-run
 
 # PROVIDE: install
 # REQUIRE: local
 # KEYWORD: default
+
+depend() {
+    need localmount
+    after eudev
 
 start() {
 	if [ "\$(cat /etc/hostname)" = "toasteros-installer" ]; then
@@ -117,6 +145,62 @@ start() {
 	fi
 }
 
+start() {
+    if [ "$(cat /etc/hostname)" = "toasteros-installer" ]; then
+        lbu add /etc/init.d
+        lbu add /boot
+        cp /etc/init.d/postinstall-cp /etc/init.d/postinstall
+
+        rc-update del networking boot
+        rc-update del wpa_supplicant boot
+        rc-update add networkmanager default
+
+        rc-service networking stop || true
+        rc-service wpa_supplicant stop || true
+        rc-service networkmanager restart
+        
+        rc-update add postinstall default
+
+        echo "Running installer..."
+        mv /etc/postinstall /etc/postinstall.bak
+        mv /etc/postinstall.bak /etc/postinstall
+    fi
+}
+EOF
+
+mkdir -p "$tmp"/etc/
+echo '
+# auto-run installer if hostname matches
+if [ "$(cat /etc/hostname)" = "toasteros-installer" ]; then
+    export SDL_VIDEODRIVER=kmsdrm
+    /etc/installer
+fi
+' >> "$tmp"/etc/profile
+
+mkdir -p "$tmp"/etc/
+makefile root:root 0644 "$tmp"/etc/inittab <<EOF
+# /etc/inittab
+
+::sysinit:/sbin/openrc sysinit
+::sysinit:/sbin/openrc boot
+::wait:/sbin/openrc default
+
+# Set up a couple of getty's
+tty1::respawn:/sbin/agetty --autologin root tty1 linux
+tty2::respawn:/sbin/agetty tty2 linux
+tty3::respawn:/sbin/agetty tty3 linux
+tty4::respawn:/sbin/agetty tty4 linux
+tty5::respawn:/sbin/agetty tty5 linux
+tty6::respawn:/sbin/agetty tty6 linux
+
+# Put a getty on the serial port
+#ttyS0::respawn:/sbin/getty -L 115200 ttyS0 vt100
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/sbin/openrc shutdown
 EOF
 
 mkdir -p "$tmp"/etc/init.d
@@ -140,6 +224,7 @@ start() {
 			mesa-dri-gallium \
 			mesa-egl \
 			libdrm \
+			mesa-gbm \
 			xf86-video-fbdev \
 			xf86-input-evdev
 		echo -e "disable_overscan=1\ndtoverlay=vc4-kms-v3d" >> /boot/config.txt
