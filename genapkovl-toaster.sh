@@ -45,6 +45,14 @@ mkdir -p "$tmp"/etc/apk
 makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
 alpine-base
 nano
+python3
+py3-pip
+sdl2
+sdl2-dev
+sdl2_ttf
+libdrm
+mesa-dri-gallium
+mesa-egl
 EOF
 
 mkdir -p "$tmp"/etc/
@@ -97,10 +105,15 @@ start() {
 		lbu add /boot
 		cp /etc/init.d/postinstall-cp /etc/init.d/postinstall
 		rc-update add postinstall default
+		cd /etc
+		export SDL_VIDEODRIVER=kmsdrm
+		/etc/installer
+		mv /etc/postinstall /etc/postinstall.bak
+		mv /etc/postinstall.bak /etc/postinstall
 		setup-alpine -e -f /etc/answers.txt
 		rm -rf /etc/answers.txt
 		rm -rf /etc/init.d/install
-		reboot
+		#reboot
 	fi
 }
 
@@ -120,14 +133,19 @@ start() {
     if [ "\$(cat /etc/hostname)" = "toasteros" ]; then
         echo "Running one-time setup..."
 		apk update
-		apk add python3 py3-pip git
-		echo "disable_overscan=1" >> /boot/config.txt
-		setup-xorg-base
-		apk add xinit xf86-video-fbdev xf86-input-evdev
+		apk add \
+			python3 py3-pip \
+			sdl2 sdl2_image sdl2_ttf sdl2_mixer \
+			sdl2-dev \
+			mesa-dri-gallium \
+			mesa-egl \
+			libdrm \
+			xf86-video-fbdev \
+			xf86-input-evdev
+		echo -e "disable_overscan=1\ndtoverlay=vc4-kms-v3d" >> /boot/config.txt
 		git clone https://github.com/xxcosita3czxx/toasterOSapp /root/toasterOSapp
 		cd /root/toasterOSapp
 		python install.py
-
 		rm -rf /etc/init.d/postinstall
         echo "postinstall done"
         
@@ -146,7 +164,11 @@ kernel=boot/vmlinuz-rpi
 initramfs boot/initramfs-rpi
 arm_64bit=$arm_64bit
 disable_overscan=1
+dtoverlay=vc4-kms-v3d
 EOF
+
+cp /home/build/dist/installer "$tmp"/etc/
+cp /home/build/dist/postinstall "$tmp"/etc/
 
 rc_add devfs sysinit
 rc_add dmesg sysinit
@@ -159,7 +181,7 @@ rc_add modules boot
 rc_add sysctl boot
 rc_add hostname boot
 rc_add bootmisc boot
-rc_add syslog boot
+rc_add syslog boot1
 
 rc_add install default
 

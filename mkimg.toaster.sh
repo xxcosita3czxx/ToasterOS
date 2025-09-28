@@ -48,7 +48,15 @@ profile_toaster() {
 	initfs_features="base squashfs mmc usb kms dhcp https"
 	hostname="toasteros-installer"
 	grub_mod=
-    apks="$apks nano"
+    apks="$apks \
+	nano \
+	python3 \
+	py3-pip \
+	sdl2 sdl2-dev \
+	sdl2_ttf sdl2_ttf-dev \
+	libdrm \
+	mesa-dri-gallium \
+	mesa-egl"
     apkovl="aports/scripts/genapkovl-toaster.sh"
 }
 
