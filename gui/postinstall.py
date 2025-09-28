@@ -1,13 +1,5 @@
 import sys
-import os
-
-def resource_path(rel_path):
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, rel_path)
-    return os.path.join(os.path.abspath("."), rel_path)
-import sys
 import sdl2
-import sdl2.ext
 
 def run():
     if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) != 0:
