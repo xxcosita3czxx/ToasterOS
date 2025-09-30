@@ -60,7 +60,6 @@ eudev
 networkmanager
 networkmanager-cli
 agetty
-sed
 kbd
 mesa-egl
 EOF

@@ -4,7 +4,6 @@ import sys
 import os
 import subprocess
 
-
 def resource_path(rel_path):
     # PyInstaller creates a temp folder and stores path in _MEIPASS
     if hasattr(sys, "_MEIPASS"):

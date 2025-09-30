@@ -65,7 +65,6 @@ profile_toaster() {
 	mesa-dri-gallium \
 	mesa-egl \
 	kbd \
-	sed \
 	agetty \
 	networkmanager \
 	networkmanager-cli"
