@@ -3,6 +3,8 @@ import sdl2.ext
 import sys
 import os
 import subprocess
+from animations import AnimationManager
+test_mode = False
 
 def resource_path(rel_path):
     # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -10,8 +12,17 @@ def resource_path(rel_path):
         return os.path.join(sys._MEIPASS, rel_path)
     return os.path.join(os.path.abspath("."), rel_path)
 
+if not test_mode:
+    os.system("rc-service networking stop")
+    os.system("rc-service wpa_supplicant stop")
+    os.system("rc-service NetworkManager restart")
+
 wifi_networks = os.popen("nmcli -t -f SSID dev wifi | grep -v '^$'").read().splitlines()
-#wifi_networks = ["HomeNetwork", "GuestWiFi", "CafeHotspot"]
+
+if test_mode:
+    wifi_networks = ["HomeWiFi", "OfficeWiFi", "CafeWiFi"]
+
+
 wifi_networks.append("Use Ethernet")
 
 def draw_text(renderer, font_manager, text, x, y, color=(255,255,255)):
@@ -49,18 +60,27 @@ def connect_wifi(ssid, password):
     # Use nmcli to connect to the WiFi network
     try:
         # Remove previous connection if exists
-        subprocess.run(["nmcli", "connection", "delete", ssid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if not test_mode:
+            subprocess.run(["nmcli", "connection", "delete", ssid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
-    # Try to connect
-    result = subprocess.run(
-        ["nmcli", "dev", "wifi", "connect", ssid, "password", password],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    try:
+        # Try to connect
+        result = subprocess.run(
+            ["nmcli", "dev", "wifi", "connect", ssid, "password", password],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+    except Exception as e:
+        if not test_mode:
+            return False, str(e)
+        else:
+            result.returncode = 0  # Simulate success in test mode
     if result.returncode == 0:
         return True, "Connected successfully!"
+    elif test_mode:
+        return True, "Test mode: Simulated connection success."
     else:
         return False, result.stderr.strip() or "Failed to connect."
 
@@ -77,8 +97,11 @@ def main():
     )
     window.show()
     renderer = sdl2.ext.Renderer(window)
+    animation_manager = AnimationManager(renderer, resource_path("Anims/"), window)
     font_manager = sdl2.ext.FontManager(resource_path("m6x11pluscs.ttf"), size=24)
     running = True
+    animation_manager.load_animations()
+    animation_manager.run_animation("load")
     selected_index = 0
     entering_password = False
     password = ""

@@ -67,6 +67,7 @@ profile_toaster() {
 	kbd \
 	agetty \
 	networkmanager \
+	networkmanager-wifi \
 	networkmanager-cli"
     apkovl="aports/scripts/genapkovl-toaster.sh"
 }
@@ -85,6 +86,6 @@ create_image_imggz() {
 profile_toasterimg() {
 	profile_toaster
 	title="ToasterOS for Raspberry Pi Disk Image"
-	image_name="alpine-rpi"
+	image_name="toasteros-rpi"
 	image_ext="img.gz"
 }

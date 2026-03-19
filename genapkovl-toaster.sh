@@ -58,6 +58,7 @@ libinput-dev
 xf86-input-libinput
 eudev
 networkmanager
+networkmanager-wifi
 networkmanager-cli
 agetty
 kbd
