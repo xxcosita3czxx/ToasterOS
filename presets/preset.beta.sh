@@ -34,6 +34,7 @@ Server = http://mirror.archlinuxarm.org/$arch/$repo
 [aur]
 Server = http://mirror.archlinuxarm.org/$arch/$repo
 EOF
+)
 
 PACKAGES=(
     base
