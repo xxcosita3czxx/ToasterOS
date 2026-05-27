@@ -15,7 +15,7 @@ LABEL=$ROOT_LABEL /.snapshots btrfs rw,subvol=@snapshots,compress=zstd,noatime 0
 EOF
 )
 
-PACMAN_CONF=$(cat <<'EOF'
+PACMAN_CONF=$(cat <<EOF
 [options]
 Architecture = aarch64
 SigLevel = Never
