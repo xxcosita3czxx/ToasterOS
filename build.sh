@@ -108,7 +108,7 @@ cat > "$ROOT/etc/mkinitcpio.conf" <<EOF
 MODULES=()
 BINARIES=(btrfs)
 FILES=()
-HOOKS=(base systemd plymouth autodetect modconf kms keyboard sd-vconsole block filesystems fsck)
+HOOKS=(base systemd plymouth modconf kms keyboard sd-vconsole block filesystems fsck)
 EOF
 
 mkdir -p "$ROOT/boot" "$ROOT/var" "$ROOT/home" "$ROOT/.snapshots"

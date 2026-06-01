@@ -21,10 +21,10 @@ EOF
 )
 
 FSTAB=$(cat <<EOF
-LABEL=$ROOT_LABEL / btrfs ro,subvol=@root,compress=zstd,noatime 0 0
-LABEL=$BOOT_LABEL /boot vfat defaults 0 2
-LABEL=$ROOT_LABEL /var btrfs rw,subvol=@var,compress=zstd,noatime 0 0
-LABEL=$ROOT_LABEL /home btrfs rw,subvol=@home,compress=zstd,noatime 0 0
+LABEL=$ROOT_LABEL /           btrfs ro,subvol=@root,compress=zstd,noatime      0 0
+LABEL=$BOOT_LABEL /boot       vfat  defaults                                   0 2
+LABEL=$ROOT_LABEL /var        btrfs rw,subvol=@var,compress=zstd,noatime       0 0
+LABEL=$ROOT_LABEL /home       btrfs rw,subvol=@home,compress=zstd,noatime      0 0
 LABEL=$ROOT_LABEL /.snapshots btrfs rw,subvol=@snapshots,compress=zstd,noatime 0 0
 EOF
 )

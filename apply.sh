@@ -18,19 +18,19 @@ cleanup() {
 trap cleanup EXIT
 
 echo "[1/4] Removing old staged root..."
-sudo btrfs subvolume delete "$MNT/@backups/old-root" 2>/dev/null || true
-sudo btrfs subvolume delete "$MNT/@backups/new-root" 2>/dev/null || true
+sudo btrfs subvolume delete "$MNT/@snapshots/old-root" 2>/dev/null || true
+sudo btrfs subvolume delete "$MNT/@snapshots/new-root" 2>/dev/null || true
 
 echo "[2/4] Receiving new root..."
-zstd -dc "$IMG" | sudo btrfs receive "$MNT/@backups"
+zstd -dc "$IMG" | sudo btrfs receive "$MNT/@snapshots"
 
 echo "[3/4] Moving received root..."
-sudo mv "$MNT/@backups/@root_ro" "$MNT/@backups/new-root"
+sudo mv "$MNT/@snapshots/@root_ro" "$MNT/@snapshots/new-root"
 
 echo "[4/4] Replacing active @root..."
-sudo btrfs subvolume snapshot -r "$MNT/@root" "$MNT/@backups/old-root" 2>/dev/null || true
+sudo btrfs subvolume snapshot -r "$MNT/@root" "$MNT/@snapshots/old-root" 2>/dev/null || true
 sudo btrfs subvolume delete "$MNT/@root"
-sudo btrfs subvolume snapshot "$MNT/@backups/new-root" "$MNT/@root"
+sudo btrfs subvolume snapshot "$MNT/@snapshots/new-root" "$MNT/@root"
 
 sync
 
