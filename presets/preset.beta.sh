@@ -1,10 +1,24 @@
 IMAGE_NAME="toasteros-beta"
 IMAGE_SIZE="6G"
 HOSTNAME="toasteros"
-COMPRESSION_LEVEL="19"
-
+COMPRESSION_LEVEL="0"
 ROOT_LABEL="SYSTEM"
 BOOT_LABEL="BOOT"
+CMDLINE="root=LABEL=$ROOT_LABEL rootfstype=btrfs rootflags=subvol=@root,ro splash rootwait console=serial0,115200 console=tty1"
+OS_RELEASE=$(cat <<EOF
+NAME="ToasterOS"
+PRETTY_NAME="ToasterOS Beta (Arch Linux ARM)"
+ID=archarm
+ID_LIKE=arch
+BUILD_ID=beta
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinuxarm.org/"
+DOCUMENTATION_URL="https://archlinuxarm.org/wiki"
+SUPPORT_URL="https://archlinuxarm.org/forum"
+BUG_REPORT_URL="https://github.com/archlinuxarm/PKGBUILDs/issues"
+LOGO=archlinux-logo
+EOF
+)
 
 FSTAB=$(cat <<EOF
 LABEL=$ROOT_LABEL / btrfs ro,subvol=@root,compress=zstd,noatime 0 0
@@ -21,34 +35,53 @@ Architecture = aarch64
 SigLevel = Never
 LocalFileSigLevel = Optional
 ParallelDownloads = 5
+Color
+ILoveCandy
 
 [core]
-Server = http://mirror.archlinuxarm.org/$arch/$repo
+Server = http://mirror.archlinuxarm.org/\$arch/\$repo
 
 [extra]
-Server = http://mirror.archlinuxarm.org/$arch/$repo
+Server = http://mirror.archlinuxarm.org/\$arch/\$repo
 
 [alarm]
-Server = http://mirror.archlinuxarm.org/$arch/$repo
+Server = http://mirror.archlinuxarm.org/\$arch/\$repo
 
 [aur]
-Server = http://mirror.archlinuxarm.org/$arch/$repo
+Server = http://mirror.archlinuxarm.org/\$arch/\$repo
 EOF
 )
 
-PACKAGES=(
+BASE_PACKAGES=(
     base
-    archlinuxarm-keyring
-    linux-rpi
+    base-devel
     raspberrypi-bootloader
+    linux-rpi
     btrfs-progs
-    zstd
+    archlinuxarm-keyring
+    plymouth
+    networkmanager
+)
+
+EXTRA_PACKAGES=(
     sudo
     nano
-    networkmanager
+    zstd
+)
+
+PACKAGES=(
+    "${BASE_PACKAGES[@]}"
+    "${EXTRA_PACKAGES[@]}"
 )
 
 ENABLED_SERVICES=(
     NetworkManager.service
     systemd-resolved.service
+)
+
+POSTINSTALL_SCRIPTS=$(cat <<EOF
+set -e
+echo "Enabling plymouth theme..."
+plymouth-set-default-theme -R toaster
+EOF
 )

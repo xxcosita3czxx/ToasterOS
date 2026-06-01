@@ -27,6 +27,8 @@ if [[ ! -f "$PRESET" ]]; then
 fi
 
 source "$PRESET"
+PRESET_NAME="$(basename "$PRESET" .sh)"
+POSTCOPY_DIR="$(dirname "$PRESET")/${PRESET_NAME}.postcopy"
 
 IMAGE_SIZE="${IMAGE_SIZE:-6G}"
 IMAGE_NAME="${IMAGE_NAME:-atomic-alarm}"
@@ -62,16 +64,22 @@ if [[ ${#ENABLED_SERVICES[@]} -eq 0 ]]; then
     )
 fi
 
-echo "[1/11] Installing build tools..."
-pacman -Syyu --noconfirm
-pacman -S --noconfirm arch-install-scripts btrfs-progs zstd dosfstools rsync
+echo "[1/12] Installing build tools..."
 
-echo "[2/11] Preparing pacman config..."
+MISSING="$(pacman -T arch-install-scripts btrfs-progs zstd dosfstools rsync)"
+
+if [[ -n "$MISSING" ]]; then
+    pacman -Sy --noconfirm $MISSING
+else
+    echo "Build tools already installed."
+fi
+
+echo "[2/12] Preparing pacman config..."
 mkdir -p "$WORK" "$OUT" "$MNT"
 
 echo "$PACMAN_CONF" > "$PACMAN_CONF_FILE"
 
-echo "[3/11] Preparing loopback Btrfs image..."
+echo "[3/12] Preparing loopback Btrfs image..."
 rm -f "$IMG"
 truncate -s "$IMAGE_SIZE" "$IMG"
 mkfs.btrfs -f -L "$ROOT_LABEL" "$IMG"
@@ -84,24 +92,30 @@ cleanup() {
 }
 trap cleanup EXIT
 
-echo "[4/11] Creating @root..."
+echo "[4/12] Creating @root..."
 btrfs subvolume create "$MNT/@root"
 ROOT="$MNT/@root"
 
-echo "[5/11] Pacstrapping Arch Linux ARM..."
-pacstrap -M -K -C "$PACMAN_CONF_FILE" "$ROOT" "${PACKAGES[@]}"
+echo "[5/12] Pacstrapping Arch Linux ARM..."
+pacstrap -C "$PACMAN_CONF_FILE" "$ROOT" "${PACKAGES[@]}"
+cp /usr/bin/qemu-aarch64-static "$ROOT/usr/bin/" || true
 
-echo "[6/11] Writing base config..."
+echo "[6/12] Writing base config..."
 echo "$HOSTNAME" > "$ROOT/etc/hostname"
-
+echo "$OS_RELEASE" > "$ROOT/etc/os-release"
 echo "$FSTAB" > "$ROOT/etc/fstab"
-
+cat > "$ROOT/etc/mkinitcpio.conf" <<EOF
+MODULES=()
+BINARIES=(btrfs)
+FILES=()
+HOOKS=(base systemd plymouth autodetect modconf kms keyboard sd-vconsole block filesystems fsck)
+EOF
 
 mkdir -p "$ROOT/boot" "$ROOT/var" "$ROOT/home" "$ROOT/.snapshots"
 
-echo "[7/11] Writing Raspberry Pi boot config..."
+echo "[7/12] Writing Raspberry Pi boot config..."
 cat > "$ROOT/boot/cmdline.txt" <<EOF
-root=LABEL=$ROOT_LABEL rootfstype=btrfs rootflags=subvol=@root,ro rootwait console=serial0,115200 console=tty1
+${CMDLINE}
 EOF
 
 if [[ -f "$ROOT/boot/config.txt" ]]; then
@@ -119,7 +133,12 @@ fi
 
 touch "$ROOT/boot/usercfg.txt"
 
-echo "[8/11] Adding /etc overlay systemd unit..."
+arch-chroot "$ROOT" /usr/bin/qemu-aarch64-static /bin/bash <<'EOF'
+set -e
+mkinitcpio -P
+EOF
+
+echo "[8/12] Adding /etc overlay systemd unit..."
 mkdir -p "$ROOT/var/overlays/etc/upper"
 mkdir -p "$ROOT/var/overlays/etc/work"
 mkdir -p "$ROOT/etc/systemd/system/sysinit.target.wants"
@@ -145,7 +164,21 @@ EOF
 ln -sf /etc/systemd/system/etc-overlay.service \
     "$ROOT/etc/systemd/system/sysinit.target.wants/etc-overlay.service"
 
-echo "[9/11] Enabling preset services..."
+echo "[9/12] Copying post-install stuff..."
+if [[ -d "$POSTCOPY_DIR" ]]; then
+    echo "Applying postcopy overlay: $POSTCOPY_DIR"
+    rsync -aAXH "$POSTCOPY_DIR"/ "$ROOT"/
+fi
+
+if [[ -n "${POSTINSTALL_SCRIPTS:-}" ]]; then
+    echo "Running preset postinstall commands..."
+    
+    arch-chroot "$ROOT" /usr/bin/qemu-aarch64-static /bin/bash <<EOF
+$POSTINSTALL_SCRIPTS
+EOF
+fi
+
+echo "[10/12] Enabling preset services..."
 mkdir -p "$ROOT/etc/systemd/system/multi-user.target.wants"
 
 for service in "${ENABLED_SERVICES[@]}"; do
@@ -157,12 +190,12 @@ for service in "${ENABLED_SERVICES[@]}"; do
     fi
 done
 
-echo "[10/11] Cleaning rootfs..."
+echo "[11/12] Cleaning rootfs..."
 rm -rf "$ROOT/var/cache/pacman/pkg/"*
 rm -rf "$ROOT/var/lib/pacman/sync/"*
 rm -rf "$ROOT/tmp/"*
 
-echo "[11/11] Exporting images..."
+echo "[12/12] Exporting images..."
 rm -f "$OUT/${IMAGE_NAME}-root.img.zst"
 rm -f "$OUT/${IMAGE_NAME}-boot.tar.zst"
 

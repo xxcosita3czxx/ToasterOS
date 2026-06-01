@@ -11,6 +11,7 @@ docker buildx build \
 
 docker run --rm -it \
     --privileged \
+    -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static:ro \
     -v "$PWD/out:/builder/out" \
     -v "$PWD/work:/builder/work" \
     toasteros-builder \

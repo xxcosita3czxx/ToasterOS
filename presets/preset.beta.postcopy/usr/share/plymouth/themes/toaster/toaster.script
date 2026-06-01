@@ -1,0 +1,71 @@
+Window.SetBackgroundTopColor (0, 0, 0);
+Window.SetBackgroundBottomColor (0, 0, 0);
+
+sprite = Sprite ();
+
+intro_seconds = 3.0;
+intro_fps = 30;
+loop_fps = 15;
+
+outro = 0;
+outro_frame = 1;
+
+loop_images = [];
+stop_images = [];
+
+i = 1;
+while (i <= 30)
+{
+    loop_images[i] = Image ("part1/" + i + ".png");
+    stop_images[i] = Image ("part2/" + i + ".png");
+    i++;
+}
+
+fun set_image (image)
+{
+    sprite.SetImage (image);
+    sprite.SetX (Window.GetWidth () / 2 - image.GetWidth () / 2);
+    sprite.SetY (Window.GetHeight () / 2 - image.GetHeight () / 2);
+}
+
+fun status_callback (status)
+{
+    if (status == "plymouth-wait-for-animation.service")
+    {
+        outro = 1;
+        outro_frame = 1;
+    }
+}
+
+fun progress_callback (time, progress)
+{
+    if (outro == 1)
+    {
+        set_image (stop_images[outro_frame]);
+
+        if (outro_frame < 30)
+            outro_frame++;
+
+        return;
+    }
+
+    if (time < intro_seconds)
+    {
+        frame = Math.Int (time * intro_fps) + 1;
+
+        if (frame > 90)
+            frame = 90;
+
+        set_image (Image ("part0/" + frame + ".png"));
+
+        return;
+    }
+
+    loop_time = time - intro_seconds;
+    frame = (Math.Int (loop_time * loop_fps) % 30) + 1;
+
+    set_image (loop_images[frame]);
+}
+
+Plymouth.SetUpdateStatusFunction (status_callback);
+Plymouth.SetBootProgressFunction (progress_callback);

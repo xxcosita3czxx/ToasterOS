@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=ToasterOS boot theme
+Description=Boot animation with actual progress
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/toaster
+ScriptFile=/usr/share/plymouth/themes/toaster/toaster.script
