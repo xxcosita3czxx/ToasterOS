@@ -194,14 +194,19 @@ echo "[12/12] Exporting images..."
 rm -f "$OUT/${IMAGE_NAME}-root.img.zst"
 rm -f "$OUT/${IMAGE_NAME}-boot.tar.zst"
 
+# Export boot partition contents first
 tar -C "$ROOT/boot" -I "zstd -T0 -${COMPRESSION_LEVEL}" \
     -cpf "$OUT/${IMAGE_NAME}-boot.tar.zst" .
 
+# Remove duplicated boot files from rootfs
+rm -rf "$ROOT/boot"/*
+mkdir -p "$ROOT/boot"
+
+# Now snapshot/send root without boot files
 btrfs subvolume snapshot -r "$ROOT" "$MNT/@root_ro"
 
 btrfs send "$MNT/@root_ro" | \
     zstd -T0 -"${COMPRESSION_LEVEL}" -o "$OUT/${IMAGE_NAME}-root.img.zst"
-
 chmod 666 "$OUT/${IMAGE_NAME}-boot.tar.zst" "$OUT/${IMAGE_NAME}-root.img.zst"
 
 echo
