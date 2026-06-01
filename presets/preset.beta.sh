@@ -4,7 +4,7 @@ HOSTNAME="toasteros"
 COMPRESSION_LEVEL="0"
 ROOT_LABEL="SYSTEM"
 BOOT_LABEL="BOOT"
-CMDLINE="root=LABEL=$ROOT_LABEL rootfstype=btrfs rootflags=subvol=@root,ro splash rootwait console=serial0,115200 console=tty1"
+CMDLINE="root=LABEL=$ROOT_LABEL rootfstype=btrfs rootflags=subvol=@root,ro dtoverlay=vc4-kms-v3d splash rootwait console=tty1"
 OS_RELEASE=$(cat <<EOF
 NAME="ToasterOS"
 PRETTY_NAME="ToasterOS Beta (Arch Linux ARM)"
@@ -65,6 +65,7 @@ BASE_PACKAGES=(
 
 EXTRA_PACKAGES=(
     sudo
+    fastfetch
     nano
     zstd
 )
