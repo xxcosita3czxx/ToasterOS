@@ -133,11 +133,6 @@ fi
 
 touch "$ROOT/boot/usercfg.txt"
 
-arch-chroot "$ROOT" /usr/bin/qemu-aarch64-static /bin/bash <<'EOF'
-set -e
-mkinitcpio -P
-EOF
-
 echo "[8/12] Adding /etc overlay systemd unit..."
 mkdir -p "$ROOT/var/overlays/etc/upper"
 mkdir -p "$ROOT/var/overlays/etc/work"
