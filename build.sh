@@ -98,6 +98,9 @@ btrfs subvolume create "$MNT/@root"
 ROOT="$MNT/@root"
 
 echo "[5/$STEPS] Pacstrapping Arch Linux ARM..."
+arch-chroot "$ROOT" /usr/bin/qemu-aarch64-static /bin/bash <<EOF
+pacman-key --init
+EOF
 pacstrap -C "$PACMAN_CONF_FILE" "$ROOT" "${PACKAGES[@]}"
 cp /usr/bin/qemu-aarch64-static "$ROOT/usr/bin/" || true
 
