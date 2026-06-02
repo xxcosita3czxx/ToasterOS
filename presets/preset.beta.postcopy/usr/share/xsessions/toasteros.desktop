@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=ToasterOS Desktop Session
+Exec=/usr/bin/start-toasteros-session
+Type=Application

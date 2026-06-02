@@ -5,6 +5,9 @@ COMPRESSION_LEVEL="0"
 ROOT_LABEL="SYSTEM"
 BOOT_LABEL="BOOT"
 CMDLINE="root=LABEL=$ROOT_LABEL rootfstype=btrfs rootflags=subvol=@root,ro dtoverlay=vc4-kms-v3d splash rootwait console=tty1"
+USERNAME="toaster"
+PASSWORD="toaster"
+ROOT_PASSWORD="$PASSWORD"
 OS_RELEASE=$(cat <<EOF
 NAME="ToasterOS"
 PRETTY_NAME="ToasterOS Beta (Arch Linux ARM)"
@@ -63,6 +66,18 @@ BASE_PACKAGES=(
     networkmanager
 )
 
+DRIVER_PACKAGES=(
+    mesa
+    xf86-video-intel
+    xf86-video-amdgpu
+    xf86-video-nouveau
+)
+
+UI_PACKAGES=(
+    xorg-server
+    sddm
+)
+
 EXTRA_PACKAGES=(
     sudo
     fastfetch
@@ -72,17 +87,24 @@ EXTRA_PACKAGES=(
 
 PACKAGES=(
     "${BASE_PACKAGES[@]}"
+    "${DRIVER_PACKAGES[@]}"
+    "${UI_PACKAGES[@]}"
     "${EXTRA_PACKAGES[@]}"
 )
 
 ENABLED_SERVICES=(
     NetworkManager.service
     systemd-resolved.service
+    sddm.service
 )
 
 POSTINSTALL_SCRIPTS=$(cat <<EOF
 set -e
 echo "Enabling plymouth theme..."
 plymouth-set-default-theme -R toaster
+useradd -m -G wheel -s /bin/bash "$USERNAME"
+echo "$USERNAME:$PASSWORD" | chpasswd
+echo "Enabling sudo for wheel group..."
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
 EOF
 )
