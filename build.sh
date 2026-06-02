@@ -84,7 +84,7 @@ rm -f "$IMG"
 truncate -s "$IMAGE_SIZE" "$IMG"
 mkfs.btrfs -f -L "$ROOT_LABEL" "$IMG"
 
-mount -o loop "$IMG" "$MNT"
+mount -o loop,noatime,nodiratime "$IMG" "$MNT"
 
 cleanup() {
     set +e
