@@ -68,7 +68,6 @@ BASE_PACKAGES=(
 
 DRIVER_PACKAGES=(
     mesa
-    xf86-video-intel
     xf86-video-amdgpu
     xf86-video-nouveau
 )
