@@ -112,7 +112,7 @@ cat > "$ROOT/etc/mkinitcpio.conf" <<EOF
 MODULES=()
 BINARIES=(btrfs)
 FILES=()
-HOOKS=(base systemd plymouth modconf kms keyboard sd-vconsole block filesystems fsck)
+HOOKS=($INITCPIO_HOOKS)
 EOF
 
 mkdir -p "$ROOT/boot" "$ROOT/var" "$ROOT/home" "$ROOT/.snapshots"
