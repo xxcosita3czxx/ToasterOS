@@ -78,6 +78,8 @@ DRIVER_PACKAGES=(
 UI_PACKAGES=(
     xorg-server
     sddm
+    sdl3
+   	sdl3_image
 )
 
 EXTRA_PACKAGES=(
